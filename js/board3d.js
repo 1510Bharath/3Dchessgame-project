@@ -47,7 +47,7 @@ export class Board3D {
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
     camera.position.set(0, 8.6, 7.4);
 
-    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: false });
+    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: false, alpha: false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
