@@ -44,10 +44,10 @@ export class Board3D {
     scene.background = new THREE.Color(0x140d0a);
     scene.fog = new THREE.Fog(0x140d0a, 9, 22);
 
-    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-    camera.position.set(0, 8.6, 7.4);
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
+    camera.position.set(0, 10.5, 12);
 
-    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: false, alpha: false });
+    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -56,7 +56,7 @@ export class Board3D {
     const controls = new OrbitControls(camera, this.canvas);
     controls.target.set(0, 0.2, 0);
     controls.minDistance = 5.5;
-    controls.maxDistance = 15;
+    controls.maxDistance = 25;
     controls.maxPolarAngle = Math.PI * 0.49;
     controls.minPolarAngle = Math.PI * 0.12;
     controls.enableDamping = true;
