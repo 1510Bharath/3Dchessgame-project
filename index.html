@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>Oakwood Chess — 3D Chess with AI &amp; Online Play</title>
+<meta name="description" content="A 3D chess game with adjustable AI opponents and pass-a-code online multiplayer." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♞</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "./js/vendor/three.module.min.js",
+    "chess.js": "./js/vendor/chess.esm.js"
+  }
+}
+</script>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ===== Top status bar ===== -->
+  <header id="topbar">
+    <button id="btnRail" class="iconbtn" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="brand">
+      <span class="brand-mark">♞</span>
+      <span class="brand-name">Oakwood&nbsp;Chess</span>
+    </div>
+    <div id="statusline" class="statusline">White to move</div>
+    <button id="btnFlip" class="iconbtn" aria-label="Flip board" title="Flip board">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h13l-3-3M20 17H7l3 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </header>
+
+  <!-- ===== Left control rail ===== -->
+  <aside id="rail">
+    <div class="rail-scroll">
+
+      <section class="panel">
+        <h2 class="panel-title">Game</h2>
+        <div class="row btnrow">
+          <button id="btnNew" class="btn">New game</button>
+          <button id="btnUndo" class="btn">Undo</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Players</h2>
+
+        <div class="player-card" data-side="w">
+          <div class="player-card-head">
+            <span class="side-chip side-chip-w">White</span>
+            <label class="toggle">
+              <input type="checkbox" id="aiToggleW" />
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              <span class="toggle-label">AI</span>
+            </label>
+          </div>
+          <div class="level-row" id="levelRowW">
+            <span class="level-label">Level</span>
+            <input type="range" min="1" max="10" value="5" id="levelW" class="slider" />
+            <span class="level-val" id="levelValW">5</span>
+          </div>
+        </div>
+
+        <div class="player-card" data-side="b">
+          <div class="player-card-head">
+            <span class="side-chip side-chip-b">Black</span>
+            <label class="toggle">
+              <input type="checkbox" id="aiToggleB" checked />
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              <span class="toggle-label">AI</span>
+            </label>
+          </div>
+          <div class="level-row" id="levelRowB">
+            <span class="level-label">Level</span>
+            <input type="range" min="1" max="10" value="5" id="levelB" class="slider" />
+            <span class="level-val" id="levelValB">5</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Clock</h2>
+        <select id="timeSelect" class="select">
+          <option value="0">Unlimited</option>
+          <option value="60">1 min · bullet</option>
+          <option value="180">3 min · blitz</option>
+          <option value="300">5 min · blitz</option>
+          <option value="600">10 min · rapid</option>
+          <option value="1800">30 min · classical</option>
+        </select>
+        <div class="clocks">
+          <div class="clockchip" id="clockW">10:00</div>
+          <div class="clockchip" id="clockB">10:00</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Play online</h2>
+        <p class="hint">Share a code with another phone or computer to play live, no app required.</p>
+        <button id="btnCreateRoom" class="btn btn-accent">Create room</button>
+        <div class="row" style="margin-top:10px">
+          <input id="joinCodeInput" class="textinput" placeholder="Enter code" maxlength="6" autocapitalize="characters" />
+          <button id="btnJoinRoom" class="btn">Join</button>
+        </div>
+        <div id="roomPlate" class="room-plate hidden">
+          <span class="room-plate-label">Room code</span>
+          <span class="room-plate-code" id="roomCodeDisplay">——————</span>
+          <button id="btnCopyCode" class="iconbtn" title="Copy code">
+            <svg viewBox="0 0 24 24" width="16" height="16"><rect x="9" y="9" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M5 15V5a1 1 0 0 1 1-1h10" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div id="mpStatus" class="mp-status"></div>
+        <button id="btnLeaveRoom" class="btn btn-ghost hidden" style="margin-top:8px">Leave room</button>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Moves</h2>
+        <ol id="moveList" class="movelist"></ol>
+      </section>
+
+      <section class="panel panel-help">
+        <button id="btnHelp" class="btn btn-ghost">Help</button>
+        <button id="btnAbout" class="btn btn-ghost">About</button>
+      </section>
+
+    </div>
+  </aside>
+  <div id="railScrim"></div>
+
+  <!-- ===== 3D board ===== -->
+  <main id="boardWrap">
+    <canvas id="boardCanvas"></canvas>
+
+    <div id="capturedTray" class="captured-tray">
+      <div class="captured-row" id="capturedByWhite"></div>
+      <div class="captured-row" id="capturedByBlack"></div>
+    </div>
+
+    <div id="thinkingChip" class="thinking-chip hidden">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="thinking-text">AI is thinking…</span>
+    </div>
+
+    <div id="endOverlay" class="end-overlay hidden">
+      <div class="end-card">
+        <div class="end-title" id="endTitle">Checkmate</div>
+        <div class="end-sub" id="endSub">White wins</div>
+        <button id="btnEndNew" class="btn btn-accent">New game</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== Promotion modal ===== -->
+  <div id="promoModal" class="modal hidden">
+    <div class="modal-card promo-card">
+      <div class="modal-title">Promote pawn to</div>
+      <div class="promo-options" id="promoOptions"></div>
+    </div>
+  </div>
+
+  <!-- ===== Help modal ===== -->
+  <div id="helpModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-title">How to play</div>
+      <div class="modal-body">
+        <p><strong>Move a piece:</strong> tap it, then tap a highlighted square. Legal destinations glow gold; the king glows red when in check.</p>
+        <p><strong>AI opponents:</strong> toggle “AI” on a side and choose a level from 1 (relaxed) to 10 (ruthless). Two AI sides can play each other.</p>
+        <p><strong>Online play:</strong> one player taps “Create room” and reads out the 6-character code; the other taps “Join”, types the code, and the board connects directly between the two devices.</p>
+        <p><strong>Camera:</strong> drag to orbit, pinch or scroll to zoom.</p>
+      </div>
+      <button class="btn btn-accent modal-close">Got it</button>
+    </div>
+  </div>
+
+  <!-- ===== About modal ===== -->
+  <div id="aboutModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-title">About Oakwood Chess</div>
+      <div class="modal-body">
+        <p>A self-contained 3D chess set: rendered with WebGL, refereed by a full chess rules engine, and opposed by a minimax search engine running in a background thread.</p>
+        <p>Online games connect two browsers directly over a peer-to-peer link — there is no game server, so moves travel straight between the two devices.</p>
+      </div>
+      <button class="btn btn-accent modal-close">Close</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/vendor/peerjs.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
