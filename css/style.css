@@ -401,45 +401,34 @@ button{ font-family:inherit; }
 .promo-opt:hover{ border-color:var(--gold); background:var(--garnet-dim); }
 
 /* =========================================================
-   Responsive — four tiers: phone, tablet, laptop, large desktop
-   =========================================================
-   <= 759px   : phone & small/portrait tablets — drawer rail
-   760-979px  : landscape tablets at the small end — drawer rail,
-                a little roomier
-   980-1279px : tablets-landscape / small laptops — permanent
-                sidebar, narrowed
-   1280-1599px: laptops — default sizing (the base styles above)
-   >= 1600px  : large desktop monitors — roomier sidebar & type
+   Responsive: phones
    ========================================================= */
-
-/* ---- large desktop ---- */
-@media (min-width: 1600px){
-  :root{ --rail-w: 372px; --topbar-h: 64px; }
-  .panel{ padding:18px; }
-  .panel-title{ font-size:13.5px; }
-  .brand-name{ font-size:19px; }
-  .statusline{ font-size:14.5px; }
+@media (max-width: 880px){
+  :root{ --rail-w: 300px; }
+ #app{
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--topbar-h) 1fr;
+  grid-template-areas:
+    "topbar"
+    "board";
+}
+#boardWrap{
+  width: 100vw;
+  height: calc(100vh - var(--topbar-h));
 }
 
-/* ---- small laptop / landscape tablet: keep sidebar, narrow it ---- */
-@media (min-width: 980px) and (max-width: 1279px){
-  :root{ --rail-w: 286px; }
-  .panel{ padding:12px; }
-  .btn{ font-size:13px; padding:9px 12px; }
+#boardCanvas{
+  width: 100%;
+  height: 100%;
 }
-
-/* ---- drawer tiers: phones and portrait tablets ---- */
-@media (max-width: 979px){
-  :root{ --rail-w: 320px; }
-  #app{ grid-template-columns: 1fr; grid-template-areas: "topbar" "board"; }
   #btnRail{ display:inline-flex; }
+  .brand-name{ font-size:16px; }
   #rail{
     position:fixed; top:var(--topbar-h); bottom:0; left:0;
-    width:min(var(--rail-w), 86vw);
+    width:var(--rail-w);
     transform: translateX(-100%);
     transition: transform .25s ease;
     box-shadow: 8px 0 30px rgba(0,0,0,.4);
-    padding-bottom: env(safe-area-inset-bottom, 0);
   }
   #rail.open{ transform: translateX(0); }
   #railScrim{
@@ -449,37 +438,12 @@ button{ font-family:inherit; }
     transition: opacity .2s;
   }
   #railScrim.show{ opacity:1; pointer-events:auto; }
+  .statusline{ font-size:11.5px; }
   .end-card{ padding:24px 22px; }
 }
 
-/* ---- landscape tablets at the smaller end (e.g. iPad mini/Air landscape) ---- */
-@media (max-width: 979px) and (min-width: 760px){
-  .statusline{ font-size:13px; }
-  .captured-row{ font-size:19px; }
-}
-
-/* ---- phones (portrait & landscape) and portrait tablets ---- */
-@media (max-width: 759px){
-  #topbar{ padding:0 calc(10px + env(safe-area-inset-left,0)) 0 calc(10px + env(safe-area-inset-right,0)); gap:10px; }
-  .brand-name{ font-size:15px; }
-  .statusline{ font-size:11.5px; }
-  .iconbtn{ width:36px; height:36px; }
-  .captured-row{ font-size:16px; }
-  .thinking-chip{ font-size:11.5px; padding:7px 13px; }
-}
-
-/* ---- very small phones ---- */
-@media (max-width: 380px){
-  .brand-name{ display:none; }                /* keep just the icon mark to save space */
-  .statusline{ font-size:10.5px; }
-  #topbar{ gap:6px; }
-}
-
-/* ---- short / landscape viewports (rotated phones) ---- */
-@media (max-height: 480px) and (orientation: landscape){
-  :root{ --topbar-h: 48px; }
-  .captured-tray{ top:4px; }
-  .thinking-chip{ bottom:8px; padding:6px 12px; }
+@media (max-width: 420px){
+  .captured-row{ font-size:15px; }
 }
 
 /* Respect reduced motion preference */
@@ -487,7 +451,3 @@ button{ font-family:inherit; }
   .thinking-chip .dot{ animation:none; }
   #rail{ transition:none; }
 }
-
-/* iOS / Android safe-area padding for the rail's own scroll content */
-.rail-scroll{ padding-left: calc(16px + env(safe-area-inset-left, 0)); }
-
